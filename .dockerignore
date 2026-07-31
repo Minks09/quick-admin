@@ -1,0 +1,15 @@
+.git
+__pycache__
+**/__pycache__
+*.pyc
+.venv
+venv
+.env
+.env.*
+!.env.example
+data/raw
+data/ig_out
+data/*.db
+data/*.sqlite3
+deploy
+README.md

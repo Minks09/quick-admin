@@ -1,0 +1,6 @@
+# Reverse proxy pour le conteneur `caddy` (front). {$DOMAIN} vient de .env ;
+# sans certificat/domaine valable, Caddy sert en HTTP local sur `localhost`.
+{$DOMAIN:localhost} {
+    reverse_proxy web:8000
+    encode zstd gzip
+}

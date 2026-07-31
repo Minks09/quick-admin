@@ -123,6 +123,31 @@ sudo systemctl reload caddy
 
 Journal du pipeline : `journalctl -u politrace-daily.service -f`.
 
+## Installation avec Docker
+
+Un conteneur par tâche : `caddy` (HTTPS/reverse proxy), `web` (app FastAPI),
+`scheduler` (pipeline quotidien + sync hebdo, remplace les timers systemd) et
+`db` (Postgres).
+
+```bash
+cp .env.example .env && nano .env   # clé Anthropic, POSTGRES_PASSWORD, DOMAIN...
+
+docker compose up -d --build
+# → http://localhost/fr/ (ou https://$DOMAIN/fr/ si DOMAIN est un vrai domaine)
+
+# Premier remplissage / administration (dans le conteneur web)
+docker compose exec web python -m scraper.sync_members
+docker compose exec web python -m scripts.create_admin vous@domaine.ch
+docker compose exec web python -m scripts.seed_demo   # ou : données de démo
+
+docker compose logs -f scheduler   # suivre le pipeline quotidien/hebdo
+```
+
+Les données persistantes (Postgres, transcriptions brutes, visuels Instagram,
+certificats Caddy) vivent dans des volumes Docker nommés (`db_data`,
+`app_data`, `caddy_data`, `caddy_config`) et survivent aux `docker compose
+down` (sans `-v`).
+
 ## Coût des résumés (API Claude)
 
 Un jour de session ≈ 20–40 débats. Avec `claude-sonnet-4-6` et ~15k tokens
@@ -238,9 +263,11 @@ le site les sert déjà sous `/media/…`, `PUBLIC_BASE_URL` doit être défini.
 app/            site FastAPI (main.py, models.py, i18n, templates/, static/)
 scraper/        parlament_client.py, sync_members.py, sync_interests.py,
                 daily_transcripts.py, summarizer.py, instagram/
-deploy/         unités systemd + timers + Caddyfile
-scripts/        seed_demo.py (données fictives de test)
-data/           base SQLite, textes bruts archivés, sorties Instagram, CSV
+deploy/         unités systemd + timers + Caddyfile (VPS sans Docker)
+deploy/docker/  Caddyfile pour le conteneur `caddy` (Docker)
+scripts/        seed_demo.py, create_admin.py, scheduler.py (timers en boucle Python)
+data/           base SQLite (hors Docker), textes bruts archivés, sorties Instagram, CSV
+Dockerfile, docker-compose.yml   image app (web + scheduler), Postgres, Caddy
 ```
 
 ## Feuille de route suggérée
