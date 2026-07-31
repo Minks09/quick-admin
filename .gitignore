@@ -1,0 +1,17 @@
+# Secrets et config locale
+.env
+
+# Donnees et sorties generees (base SQLite, textes bruts, visuels Instagram)
+data/raw/
+data/ig_out/
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Systeme
+.DS_Store

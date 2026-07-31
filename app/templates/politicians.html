@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ t('politicians_title') }}{% endblock %}
+{% block content %}
+<h1>{{ t('politicians_title') }}</h1>
+
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="{{ t('search_placeholder') }}">
+  <select name="party" onchange="this.form.submit()">
+    <option value="">{{ t('filter_all_parties') }}</option>
+    {% for p in parties %}<option value="{{ p }}" {% if p == f_party %}selected{% endif %}>{{ p }}</option>{% endfor %}
+  </select>
+  <select name="canton" onchange="this.form.submit()">
+    <option value="">{{ t('filter_all_cantons') }}</option>
+    {% for c in cantons %}<option value="{{ c }}" {% if c == f_canton %}selected{% endif %}>{{ c }}</option>{% endfor %}
+  </select>
+  <select name="role" onchange="this.form.submit()">
+    <option value="">{{ t('filter_all_roles') }}</option>
+    {% for r in roles %}<option value="{{ r }}" {% if r == f_role %}selected{% endif %}>{{ t('role_' ~ r) }}</option>{% endfor %}
+  </select>
+  <select name="council" onchange="this.form.submit()">
+    <option value="">{{ t('filter_all_councils') }}</option>
+    <option value="N" {% if f_council == 'N' %}selected{% endif %}>{{ t('council_N') }}</option>
+    <option value="S" {% if f_council == 'S' %}selected{% endif %}>{{ t('council_S') }}</option>
+  </select>
+  <button type="submit">OK</button>
+</form>
+
+<ul class="peoplelist">
+  {% for p in people %}
+  <li>
+    <a href="/{{ lang }}/politiciens/{{ p.id }}">
+      <span class="pname"><i class="pchip" style="background:{{ pcolor(p.party_abbr) }}"></i>{{ p.last_name }} <span class="pfirst">{{ p.first_name }}</span></span>
+      <span class="ptags mono">{{ p.party_abbr or '—' }} · {{ p.canton_abbr or '' }} · {{ p.council or p.institution or t('role_' ~ p.role_type) }}</span>
+      <span class="ties" title="{{ counts.get(p.id, 0) }} {{ t('interests') }}">
+        {% for _ in range([counts.get(p.id, 0), 24] | min) %}<i></i>{% endfor %}
+        {% if counts.get(p.id, 0) > 24 %}<b class="mono">+{{ counts.get(p.id, 0) - 24 }}</b>{% endif %}
+      </span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

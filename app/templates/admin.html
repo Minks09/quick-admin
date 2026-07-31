@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Admin</h1>
+
+{% if msg %}
+  {% if msg == 'meta_saved' %}<p class="flash ok">{{ t('meta_saved') }}</p>
+  {% elif msg == 'caption_saved' %}<p class="flash ok">{{ t('caption_saved') }}</p>
+  {% elif msg == 'post_published' %}<p class="flash ok">{{ t('post_published') }}</p>
+  {% elif msg.startswith('meta_ok::') %}<p class="flash ok">✓ {{ msg[9:] }}</p>
+  {% elif msg.startswith('meta_err::') %}<p class="flash err">✗ {{ msg[10:] }}</p>
+  {% endif %}
+{% endif %}
+
+<h2 class="rule red">{{ t('publications') }}</h2>
+<p class="note">{{ t('publications_intro') }}</p>
+{% for p, previews in posts %}
+<article class="postcard">
+  <div class="posthead">
+    <span class="mono">{{ p.day.isoformat() }}</span>
+    <span class="badge {% if p.ig_published_at %}on{% endif %}">IG {{ '✓ ' ~ p.ig_published_at.strftime('%d.%m %H:%M') if p.ig_published_at else '—' }}</span>
+    <span class="badge {% if p.fb_published_at %}on{% endif %}">FB {{ '✓ ' ~ p.fb_published_at.strftime('%d.%m %H:%M') if p.fb_published_at else '—' }}</span>
+  </div>
+  <div class="previews">
+    {% for url in previews %}<img src="{{ url }}" alt="" loading="lazy">{% endfor %}
+  </div>
+  <form method="post" action="/{{ lang }}/admin/posts/{{ p.id }}/caption" class="captionform">
+    <textarea name="caption" rows="4">{{ p.caption or '' }}</textarea>
+    <button class="small" type="submit">{{ t('update_caption') }}</button>
+  </form>
+  <form method="post" action="/{{ lang }}/admin/posts/{{ p.id }}/publier" class="pubform">
+    <label><input type="checkbox" name="network_ig" value="1" {% if not p.ig_published_at %}checked{% endif %}> Instagram</label>
+    <label><input type="checkbox" name="network_fb" value="1" {% if not p.fb_published_at %}checked{% endif %}> Facebook</label>
+    <button type="submit" onclick="return confirm('{{ t('confirm_publish') }}')">{{ t('publish_now') }}</button>
+  </form>
+  {% if p.last_error %}<p class="flash err">✗ {{ p.last_error }}</p>{% endif %}
+</article>
+{% else %}
+<p class="empty">{{ t('no_posts') }}</p>
+{% endfor %}
+
+<h2 class="rule">{{ t('meta_title') }}</h2>
+<p class="note">{{ t('meta_intro') }}</p>
+<form class="authform" method="post" action="/{{ lang }}/admin/meta">
+  <label>{{ t('meta_token') }}
+    <input type="password" name="meta_access_token" value="{{ meta.meta_access_token }}" autocomplete="off">
+  </label>
+  <label>Instagram User ID
+    <input type="text" name="meta_ig_user_id" value="{{ meta.meta_ig_user_id }}" autocomplete="off">
+  </label>
+  <label>Facebook Page ID
+    <input type="text" name="meta_fb_page_id" value="{{ meta.meta_fb_page_id }}" autocomplete="off">
+  </label>
+  <button type="submit">{{ t('save') }}</button>
+</form>
+<form method="post" action="/{{ lang }}/admin/meta/tester">
+  <button class="small" type="submit">{{ t('test_connection') }}</button>
+</form>
+
+<h2 class="rule">{{ t('admin_search') }}</h2>
+<form class="filters" method="get" action="/{{ lang }}/admin">
+  <input type="search" name="kw" value="{{ kw }}" placeholder="{{ t('keywords') }}">
+  <select name="period">
+    <option value="6m" {% if period == '6m' %}selected{% endif %}>{{ t('period_6m') }}</option>
+    <option value="12m" {% if period == '12m' %}selected{% endif %}>{{ t('period_12m') }}</option>
+    <option value="all" {% if period == 'all' %}selected{% endif %}>{{ t('period_all') }}</option>
+  </select>
+  <select name="slang">
+    {% for l in langs %}<option value="{{ l }}" {% if l == slang %}selected{% endif %}>{{ l|upper }}</option>{% endfor %}
+  </select>
+  <button type="submit">{{ t('search') }}</button>
+</form>
+
+{% if kw %}
+<p class="mono">{{ results|length }} {{ t('results') }}</p>
+{% for s in results %}
+<article class="card searchresult">
+  <p class="meta mono">{{ s.debate.day.isoformat() }} · {{ s.debate.council_abbr }}{% if s.debate.business_number %} · {{ s.debate.business_number }}{% endif %}</p>
+  <h3><a href="/{{ lang }}/sessions/{{ s.debate.day.isoformat() }}">{{ s.title }}</a></h3>
+  <p>{{ s.body[:300] }}{% if s.body|length > 300 %}…{% endif %}</p>
+</article>
+{% else %}
+<p class="empty">{{ t('no_results') }}</p>
+{% endfor %}
+{% endif %}
+
+<h2 class="rule">{{ t('admin_users') }} ({{ users|length }})</h2>
+<table class="datatable">
+  <thead><tr><th>{{ t('email') }}</th><th>{{ t('name') }}</th><th>{{ t('role') }}</th><th>{{ t('my_alerts') }}</th><th>{{ t('registered') }}</th><th></th></tr></thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <td>{{ u.email }}</td>
+      <td>{{ u.name or '—' }}</td>
+      <td>{% if u.role == 'admin' %}<span class="badge on">admin</span>{% else %}user{% endif %}</td>
+      <td class="mono">{{ alert_counts.get(u.id, 0) }}</td>
+      <td class="mono">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+      <td class="actions">
+        {% if u.id != user.id %}
+        <form method="post" action="/{{ lang }}/admin/users/{{ u.id }}/role"><button class="small">{{ t('demote') if u.role == 'admin' else t('promote') }}</button></form>
+        <form method="post" action="/{{ lang }}/admin/users/{{ u.id }}/supprimer" onsubmit="return confirm('{{ t('confirm_delete') }}')"><button class="small danger">{{ t('delete') }}</button></form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="rule">{{ t('admin_alerts') }}</h2>
+<table class="datatable">
+  <thead><tr><th>{{ t('email') }}</th><th>{{ t('keywords') }}</th><th>{{ t('alert_lang') }}</th><th>{{ t('status') }}</th><th>{{ t('last_match') }}</th></tr></thead>
+  <tbody>
+  {% for a in all_alerts %}
+    <tr>
+      <td>{{ a.user.email }}</td>
+      <td>{{ a.keywords }}</td>
+      <td class="mono">{{ a.lang|upper }}</td>
+      <td>{% if a.active %}<span class="badge on">{{ t('active') }}</span>{% else %}<span class="badge">{{ t('paused') }}</span>{% endif %}</td>
+      <td class="mono">{{ a.last_match_at.strftime('%Y-%m-%d') if a.last_match_at else '—' }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="empty">—</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ day.isoformat() }}{% endblock %}
+{% block content %}
+<a class="back mono" href="/{{ lang }}/sessions">← {{ t('back') }}</a>
+<h1 class="mono">{{ day.isoformat() }}</h1>
+{% if items %}
+  {% for deb, s in items %}
+  <article class="debate">
+    <p class="meta mono">{{ t('council_' ~ deb.council_abbr) if deb.council_abbr in ['N','S','CF'] else deb.council_abbr }}{% if deb.business_number %} · {{ deb.business_number }}{% endif %}</p>
+    <h2>{{ s.title }}</h2>
+    {% if deb.groups %}
+    <p class="groupchips">
+      {% for g in deb.groups.split('|') %}<span class="gchip" style="border-color:{{ pcolor(g) }}"><i style="background:{{ pcolor(g) }}"></i>{{ g }}</span>{% endfor %}
+    </p>
+    {% endif %}
+    <p>{{ s.body }}</p>
+    {% if s.stakes %}<h3 class="sub">{{ t('stakes') }}</h3><p>{{ s.stakes }}</p>{% endif %}
+    {% if s.outcome %}<h3 class="sub red">{{ t('outcome') }}</h3><p>{{ s.outcome }}</p>{% endif %}
+    <p class="disclaimer">{{ t('ai_disclaimer') }}</p>
+  </article>
+  {% endfor %}
+{% else %}
+  <p class="empty">{{ t('no_debates_day') }}</p>
+{% endif %}
+{% endblock %}

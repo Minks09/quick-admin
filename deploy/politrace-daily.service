@@ -1,0 +1,10 @@
+# /etc/systemd/system/politrace-daily.service — pipeline quotidien (oneshot)
+[Unit]
+Description=Politrace pipeline quotidien (retranscriptions + résumés + visuels IG)
+
+[Service]
+Type=oneshot
+User=politrace
+WorkingDirectory=/opt/politrace
+EnvironmentFile=/opt/politrace/.env
+ExecStart=/opt/politrace/venv/bin/python -m scraper.daily_transcripts

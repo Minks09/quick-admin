@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ t('register') }}{% endblock %}
+{% block content %}
+<h1>{{ t('register') }}</h1>
+<p class="lede">{{ t('register_pitch') }}</p>
+{% if error %}<p class="formerror">{{ t(error) }}</p>{% endif %}
+<form class="authform" method="post" action="/{{ lang }}/inscription">
+  <label>{{ t('name') }}<input type="text" name="name" autocomplete="name"></label>
+  <label>{{ t('email') }}<input type="email" name="email" required autocomplete="email"></label>
+  <label>{{ t('password') }} ({{ t('password_hint') }})<input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+  <button type="submit">{{ t('register') }}</button>
+</form>
+<p class="note"><a href="/{{ lang }}/connexion">{{ t('have_account') }}</a></p>
+{% endblock %}

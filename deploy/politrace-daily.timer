@@ -1,0 +1,10 @@
+# /etc/systemd/system/politrace-daily.timer — chaque matin à 06:30 (heure suisse)
+[Unit]
+Description=Déclenche le pipeline quotidien Politrace
+
+[Timer]
+OnCalendar=*-*-* 06:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

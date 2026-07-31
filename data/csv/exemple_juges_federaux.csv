@@ -1,0 +1,3 @@
+nom,prenom,fonction,institution,niveau,parti,canton,canton_abbr,annee_naissance,depuis
+Exemple,Juge,federal_judge,Tribunal fédéral,federal,PS,,,1970,2016
+Exemple,Conseillere,cantonal_exec,Conseil d'État,cantonal,PLR,Vaud,VD,1975,2022

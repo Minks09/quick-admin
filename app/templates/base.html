@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site_name }}{% endblock %} — {{ site_name }}</title>
+<meta name="description" content="{{ t('home_intro') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="masthead">
+  <a class="wordmark" href="/{{ lang }}/">{{ site_name|upper }}<span class="dot">.</span></a>
+  <p class="tagline">{{ t('site_tagline') }}</p>
+  <nav class="mainnav">
+    <a href="/{{ lang }}/" {% if request.url.path == '/' ~ lang ~ '/' %}class="on"{% endif %}>{{ t('nav_home') }}</a>
+    <a href="/{{ lang }}/politiciens" {% if '/politiciens' in request.url.path %}class="on"{% endif %}>{{ t('nav_politicians') }}</a>
+    <a href="/{{ lang }}/sessions" {% if '/sessions' in request.url.path %}class="on"{% endif %}>{{ t('nav_sessions') }}</a>
+    <a href="/{{ lang }}/a-propos" {% if '/a-propos' in request.url.path %}class="on"{% endif %}>{{ t('nav_about') }}</a>
+    {% if user %}
+      <a href="/{{ lang }}/alertes" {% if '/alertes' in request.url.path %}class="on"{% endif %}>{{ t('my_alerts') }}</a>
+      {% if user.role == 'admin' %}<a href="/{{ lang }}/admin" {% if '/admin' in request.url.path %}class="on"{% endif %}>Admin</a>{% endif %}
+      <a href="/deconnexion" class="dim">{{ t('logout') }}</a>
+    {% else %}
+      <a href="/{{ lang }}/connexion" {% if '/connexion' in request.url.path or '/inscription' in request.url.path %}class="on"{% endif %}>{{ t('login') }}</a>
+    {% endif %}
+    <span class="langs">
+      {% for l in langs %}<a href="{{ request.url.path | replace('/' ~ lang ~ '/', '/' ~ l ~ '/') }}" class="{% if l == lang %}on{% endif %}">{{ l|upper }}</a>{% endfor %}
+    </span>
+  </nav>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer>
+  <p>{{ t('about_sources') }}</p>
+</footer>
+</body>
+</html>

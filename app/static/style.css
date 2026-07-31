@@ -1,0 +1,153 @@
+/* Politrace — style typographique suisse.
+   Palette : papier froid, encre, rouge fédéral réservé aux liens d'intérêts. */
+:root{
+  --paper:#EEF0ED;
+  --ink:#121519;
+  --steel:#5A6672;
+  --line:#C6CBC4;
+  --red:#DA291C;
+  --white:#FDFDFC;
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-variation-settings:'wdth' 100;
+  line-height:1.55;
+}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:.8rem;letter-spacing:.02em}
+a{color:inherit;text-decoration:none}
+main{max-width:980px;margin:0 auto;padding:0 20px 80px}
+
+/* ---- masthead ---- */
+.masthead{border-bottom:3px solid var(--ink);padding:28px 20px 0;max-width:980px;margin:0 auto}
+.wordmark{
+  font-weight:900;font-variation-settings:'wdth' 125;
+  font-size:clamp(2.4rem,7vw,4.2rem);letter-spacing:-.02em;display:inline-block;line-height:1
+}
+.wordmark .dot{color:var(--red)}
+.tagline{margin:.2rem 0 1rem;color:var(--steel);font-size:.95rem}
+.mainnav{display:flex;flex-wrap:wrap;gap:18px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.mainnav a{font-weight:600;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;padding-bottom:2px}
+.mainnav a.on{border-bottom:3px solid var(--red)}
+.langs{margin-left:auto;display:flex;gap:10px}
+.langs a{color:var(--steel);font-size:.8rem}
+.langs a.on{color:var(--ink);border-bottom:3px solid var(--ink)}
+
+/* ---- accueil ---- */
+.hero{padding:36px 0 8px}
+.lede{font-size:1.2rem;max-width:44rem;font-weight:500}
+.statrow{display:flex;gap:0;border:2px solid var(--ink);background:var(--white);margin-top:24px}
+.stat{flex:1;padding:16px 18px;border-right:2px solid var(--ink)}
+.stat:last-child{border-right:0}
+.stat .num{display:block;font-weight:900;font-size:2rem;font-variation-settings:'wdth' 115;line-height:1}
+.stat .lbl{color:var(--steel);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+
+h1{font-weight:900;font-variation-settings:'wdth' 118;font-size:clamp(1.8rem,4.5vw,2.6rem);letter-spacing:-.01em;margin:36px 0 12px}
+h2.rule{
+  font-size:.95rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+  border-top:3px solid var(--ink);padding-top:8px;margin:44px 0 18px
+}
+h2.rule.red{border-top-color:var(--red)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--white);border:1px solid var(--line);padding:16px 18px}
+.card h3{margin:.4rem 0;font-size:1.05rem;line-height:1.3}
+.card p{margin:.3rem 0;font-size:.92rem;color:#2a2e33}
+.card .meta{color:var(--steel)}
+.more{font-weight:700;font-size:.85rem;color:var(--red)}
+
+/* ---- liste élu·es ---- */
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 22px}
+.filters input,.filters select,.filters button{
+  font:inherit;font-size:.9rem;padding:9px 12px;border:2px solid var(--ink);
+  background:var(--white);border-radius:0
+}
+.filters input{flex:1;min-width:180px}
+.filters button{background:var(--ink);color:var(--white);font-weight:700;cursor:pointer}
+.peoplelist{list-style:none;margin:0;padding:0}
+.peoplelist li{border-bottom:1px solid var(--line)}
+.peoplelist a{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;padding:12px 4px}
+.peoplelist a:hover{background:var(--white)}
+.pname{font-weight:700;min-width:220px}
+.pfirst{font-weight:400}
+.ptags{color:var(--steel)}
+.ties{margin-left:auto;display:flex;gap:2px;align-items:center}
+.ties i{width:8px;height:8px;background:var(--red);display:inline-block}
+.ties b{color:var(--red);font-weight:500;margin-left:4px}
+
+/* ---- fiche ---- */
+.back{display:inline-block;margin-top:22px;color:var(--steel)}
+.pheader h1{margin:10px 0 4px}
+.pheader .strong{font-variation-settings:'wdth' 125}
+.meta{color:var(--steel)}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+@media(max-width:760px){.twocol{grid-template-columns:1fr}}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+.timeline .dates{color:var(--steel);min-width:86px;padding-top:2px}
+.timeline .what em{color:var(--steel);font-style:normal}
+.note{font-size:.85rem;color:var(--steel);max-width:38rem}
+.sector{margin:20px 0 6px;color:var(--ink);text-transform:uppercase}
+.sector .sq{display:inline-block;width:9px;height:9px;background:var(--red);margin-right:8px}
+.intlist{list-style:none;margin:0;padding:0}
+.intlist li{padding:8px 0;border-bottom:1px solid var(--line)}
+.org{font-weight:700;display:block}
+.fn{display:block;font-size:.92rem}
+.tiny{color:var(--steel)}
+
+/* ---- sessions ---- */
+.daylist{list-style:none;margin:20px 0;padding:0;max-width:520px}
+.daylist a{display:flex;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--line);font-weight:600}
+.daylist a:hover{background:var(--white)}
+.debate{background:var(--white);border:1px solid var(--line);border-left:5px solid var(--ink);padding:20px 24px;margin:18px 0}
+.debate h2{margin:.3rem 0 .6rem;font-size:1.3rem;font-weight:800}
+.debate .sub{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 4px;color:var(--steel)}
+.debate .sub.red{color:var(--red)}
+.disclaimer{font-size:.75rem;color:var(--steel);border-top:1px solid var(--line);padding-top:8px;margin-top:16px}
+
+/* ---- code couleur des partis ---- */
+.pchip{display:inline-block;width:11px;height:11px;margin-right:8px;vertical-align:baseline}
+.groupchips{display:flex;flex-wrap:wrap;gap:8px;margin:.2rem 0 .8rem}
+.gchip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid;padding:2px 9px;
+  font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:500}
+.gchip i{width:8px;height:8px;display:inline-block}
+
+/* ---- formulaires auth / tables ---- */
+.authform{display:flex;flex-direction:column;gap:14px;max-width:420px;margin:18px 0}
+.authform.inline{max-width:720px}
+.authform label{font-weight:700;font-size:.85rem;display:flex;flex-direction:column;gap:6px}
+.authform input,.authform select{font:inherit;font-size:.95rem;padding:10px 12px;border:2px solid var(--ink);background:var(--white);border-radius:0}
+.authform button{align-self:flex-start;font:inherit;font-weight:700;padding:10px 22px;background:var(--ink);color:var(--white);border:2px solid var(--ink);cursor:pointer}
+.formerror{color:var(--red);font-weight:700;border-left:4px solid var(--red);padding-left:10px}
+.datatable{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);margin:14px 0;font-size:.9rem}
+.datatable th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--steel);border-bottom:2px solid var(--ink);padding:10px 12px}
+.datatable td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.datatable .actions{display:flex;gap:6px}
+button.small{font:inherit;font-size:.75rem;font-weight:700;padding:4px 10px;background:var(--white);border:1.5px solid var(--ink);cursor:pointer}
+button.small.danger{border-color:var(--red);color:var(--red)}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:.7rem;border:1.5px solid var(--steel);color:var(--steel);padding:1px 8px}
+.badge.on{border-color:var(--red);color:var(--red)}
+.mainnav a.dim{color:var(--steel)}
+.searchresult{margin:10px 0}
+
+.empty{color:var(--steel);font-style:italic}
+footer{max-width:980px;margin:0 auto;padding:24px 20px 48px;border-top:3px solid var(--ink);color:var(--steel);font-size:.8rem}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- publications admin ---- */
+.flash{font-weight:700;padding:10px 14px;border-left:5px solid;margin:14px 0}
+.flash.ok{border-color:#1a7f37;color:#1a7f37;background:var(--white)}
+.flash.err{border-color:var(--red);color:var(--red);background:var(--white)}
+.postcard{background:var(--white);border:1px solid var(--line);padding:16px 18px;margin:14px 0}
+.posthead{display:flex;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.previews{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px}
+.previews img{width:120px;height:150px;object-fit:cover;border:1px solid var(--line)}
+.captionform{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.captionform textarea{font:inherit;font-size:.85rem;padding:10px;border:2px solid var(--line);resize:vertical}
+.captionform button{align-self:flex-start}
+.pubform{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
+.pubform label{font-size:.9rem;font-weight:600;display:flex;gap:6px;align-items:center}
+.pubform button{font:inherit;font-weight:700;padding:8px 18px;background:var(--red);color:var(--white);border:2px solid var(--red);cursor:pointer}

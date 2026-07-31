@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ t('sessions_title') }}{% endblock %}
+{% block content %}
+<h1>{{ t('sessions_title') }}</h1>
+<p class="lede">{{ t('sessions_intro') }}</p>
+<ul class="daylist">
+  {% for day, n in days %}
+  <li><a href="/{{ lang }}/sessions/{{ day.isoformat() }}">
+    <span class="mono">{{ day.isoformat() }}</span>
+    <span>{{ n }} {{ t('debates') }}</span>
+  </a></li>
+  {% else %}
+  <li class="empty">{{ t('empty_home') }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

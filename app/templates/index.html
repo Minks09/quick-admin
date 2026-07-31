@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav_home') }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="lede">{{ t('home_intro') }}</p>
+  <div class="statrow">
+    <div class="stat"><span class="num">{{ stats.members }}</span><span class="lbl">{{ t('members') }}</span></div>
+    <div class="stat"><span class="num">{{ stats.interests }}</span><span class="lbl">{{ t('interests_count') }}</span></div>
+    <div class="stat"><span class="num">{{ stats.debates }}</span><span class="lbl">{{ t('summaries_count') }}</span></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="rule">{{ t('home_latest') }}</h2>
+  {% if latest %}
+  <div class="cards">
+    {% for s in latest %}
+    <article class="card">
+      <p class="meta mono">{{ s.debate.day.isoformat() }} · {{ t('council_' ~ s.debate.council_abbr) if s.debate.council_abbr in ['N','S','CF'] else s.debate.council_abbr }}</p>
+      <h3><a href="/{{ lang }}/sessions/{{ s.debate.day.isoformat() }}">{{ s.title }}</a></h3>
+      <p>{{ s.body[:220] }}{% if s.body|length > 220 %}…{% endif %}</p>
+      <a class="more" href="/{{ lang }}/sessions/{{ s.debate.day.isoformat() }}">{{ t('read_more') }} →</a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">{{ t('empty_home') }}</p>
+  {% endif %}
+</section>
+{% endblock %}

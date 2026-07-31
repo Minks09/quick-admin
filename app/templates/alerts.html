@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ t('my_alerts') }}{% endblock %}
+{% block content %}
+<h1>{{ t('my_alerts') }}</h1>
+<p class="lede">{{ t('alerts_intro') }}</p>
+
+<form class="authform inline" method="post" action="/{{ lang }}/alertes/ajouter">
+  <label>{{ t('keywords') }} ({{ t('keywords_hint') }})
+    <input type="text" name="keywords" required placeholder="assurance maladie, LAMal, primes">
+  </label>
+  <label>{{ t('alert_lang') }}
+    <select name="alert_lang">
+      {% for l in langs %}<option value="{{ l }}" {% if l == lang %}selected{% endif %}>{{ l|upper }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit">{{ t('add_alert') }}</button>
+</form>
+
+<table class="datatable">
+  <thead><tr><th>{{ t('keywords') }}</th><th>{{ t('alert_lang') }}</th><th>{{ t('status') }}</th><th>{{ t('last_match') }}</th><th></th></tr></thead>
+  <tbody>
+  {% for a in alerts %}
+    <tr>
+      <td>{{ a.keywords }}</td>
+      <td class="mono">{{ a.lang|upper }}</td>
+      <td>{% if a.active %}<span class="badge on">{{ t('active') }}</span>{% else %}<span class="badge">{{ t('paused') }}</span>{% endif %}</td>
+      <td class="mono">{{ a.last_match_at.strftime('%Y-%m-%d') if a.last_match_at else '—' }}</td>
+      <td class="actions">
+        <form method="post" action="/{{ lang }}/alertes/{{ a.id }}/basculer"><button class="small">{{ t('pause') if a.active else t('resume') }}</button></form>
+        <form method="post" action="/{{ lang }}/alertes/{{ a.id }}/supprimer"><button class="small danger">{{ t('delete') }}</button></form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="empty">{{ t('no_alerts') }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="note">{{ t('alerts_email_note') }} <strong>{{ user.email }}</strong></p>
+{% endblock %}

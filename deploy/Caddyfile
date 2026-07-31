@@ -1,0 +1,5 @@
+# /etc/caddy/Caddyfile — HTTPS automatique (Let's Encrypt)
+votre-domaine.ch {
+    reverse_proxy 127.0.0.1:8000
+    encode zstd gzip
+}

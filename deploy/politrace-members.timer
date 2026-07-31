@@ -1,0 +1,10 @@
+# /etc/systemd/system/politrace-members.timer — sync élus 1×/semaine (lundi 05:00)
+[Unit]
+Description=Déclenche la synchronisation hebdomadaire des élus
+
+[Timer]
+OnCalendar=Mon *-*-* 05:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

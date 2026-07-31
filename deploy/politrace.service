@@ -1,0 +1,15 @@
+# /etc/systemd/system/politrace.service — le site web
+[Unit]
+Description=Politrace web (FastAPI)
+After=network.target
+
+[Service]
+User=politrace
+WorkingDirectory=/opt/politrace
+EnvironmentFile=/opt/politrace/.env
+ExecStart=/opt/politrace/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

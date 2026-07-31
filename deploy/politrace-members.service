@@ -1,0 +1,9 @@
+[Unit]
+Description=Politrace sync hebdomadaire des élus
+
+[Service]
+Type=oneshot
+User=politrace
+WorkingDirectory=/opt/politrace
+EnvironmentFile=/opt/politrace/.env
+ExecStart=/opt/politrace/venv/bin/python -m scraper.sync_members

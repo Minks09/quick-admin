@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ p.full_name }}{% endblock %}
+{% block content %}
+<a class="back mono" href="/{{ lang }}/politiciens">← {{ t('back') }}</a>
+<header class="pheader">
+  <h1>{{ p.first_name }} <span class="strong">{{ p.last_name }}</span></h1>
+  <p class="meta mono"><i class="pchip" style="background:{{ pcolor(p.party_abbr) }}"></i>{{ p.party_abbr or '' }}{% if p.party_name %} — {{ p.party_name }}{% endif %} · {{ p.canton or '' }} · {% if p.role_type == 'parliament' and p.council %}{{ t('council_' ~ ('N' if 'ational' in p.council else 'S')) }}{% else %}{{ t('role_' ~ p.role_type) }}{% if p.institution %} — {{ p.institution }}{% endif %}{% endif %}{% if p.birth_year %} · *{{ p.birth_year }}{% endif %}</p>
+</header>
+
+<div class="twocol">
+  <section>
+    <h2 class="rule">{{ t('career') }}</h2>
+    <ol class="timeline">
+      {% for m in mandates %}
+      <li>
+        <span class="dates mono">{{ m.start.year if m.start else '·' }}–{{ m.end.year if m.end else '' }}</span>
+        <span class="what">{{ m.label }}{% if m.organization %} <em>{{ m.organization }}</em>{% endif %}</span>
+      </li>
+      {% else %}
+      <li><span class="what">—</span></li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section>
+    <h2 class="rule red">{{ t('interests') }}</h2>
+    <p class="note">{{ t('interests_note') }}</p>
+    {% if by_sector %}
+      {% for sector, items in by_sector.items() %}
+      <h3 class="sector mono"><i class="sq"></i>{{ sector }}</h3>
+      <ul class="intlist">
+        {% for i in items %}
+        <li>
+          <span class="org">{{ i.organization }}</span>
+          {% if i.function %}<span class="fn">{{ i.function }}</span>{% endif %}
+          <span class="mono tiny">{{ t('paid') }} : {{ t('paid_' ~ (i.paid or 'unknown')) }}{% if i.since %} · {{ t('since') }} {{ i.since.year }}{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+    {% else %}
+      <p class="empty">{{ t('no_interests') }}</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

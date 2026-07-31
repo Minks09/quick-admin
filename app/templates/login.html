@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ t('login') }}{% endblock %}
+{% block content %}
+<h1>{{ t('login') }}</h1>
+{% if error %}<p class="formerror">{{ t(error) }}</p>{% endif %}
+<form class="authform" method="post" action="/{{ lang }}/connexion">
+  <label>{{ t('email') }}<input type="email" name="email" required autocomplete="email"></label>
+  <label>{{ t('password') }}<input type="password" name="password" required autocomplete="current-password"></label>
+  <button type="submit">{{ t('login') }}</button>
+</form>
+<p class="note"><a href="/{{ lang }}/inscription">{{ t('no_account') }}</a></p>
+{% endblock %}
