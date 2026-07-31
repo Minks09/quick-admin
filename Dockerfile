@@ -17,10 +17,11 @@ COPY scraper ./scraper
 COPY scripts ./scripts
 COPY data/csv ./data/csv
 
-RUN useradd --create-home --uid 1000 politrace \
+RUN chmod +x scripts/start_web.sh \
+    && useradd --create-home --uid 1000 politrace \
     && mkdir -p data/raw data/ig_out \
     && chown -R politrace:politrace /app
 USER politrace
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./scripts/start_web.sh"]

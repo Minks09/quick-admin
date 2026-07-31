@@ -148,6 +148,26 @@ certificats Caddy) vivent dans des volumes Docker nommés (`db_data`,
 `app_data`, `caddy_data`, `caddy_config`) et survivent aux `docker compose
 down` (sans `-v`).
 
+## Démo rapide depuis un téléphone (Render)
+
+Pour montrer le site (élus réels, sans pipeline de résumés Claude) depuis un
+lien HTTPS ouvrable sur mobile, sans terminal ni ordinateur :
+
+1. Sur render.com : **New > Blueprint**, connectez-vous avec GitHub, choisissez
+   le repo `quick-admin` et la branche à déployer.
+2. Render lit `render.yaml` à la racine et crée automatiquement le service web
+   (`Dockerfile`) + une base Postgres gratuite, reliés entre eux.
+3. Cliquez **Apply** / **Deploy**. Premier démarrage : quelques minutes.
+4. Le lien public (`https://politrace-xxxx.onrender.com/fr/`) est indiqué sur
+   la page du service Render — ouvrez-le dans Safari/Chrome.
+
+Au démarrage du conteneur, `scripts/start_web.sh` synchronise automatiquement
+les ~250 élus fédéraux depuis l'API publique du Parlement (aucune clé requise)
+avant de lancer le serveur — pas de résumés de débats ni de clé Anthropic pour
+cette démo. Le plan gratuit Render met le service en veille après ~15 min
+d'inactivité ; la première ouverture après une pause prend ~30 s (réveil du
+conteneur), le reste du week-end est fluide.
+
 ## Coût des résumés (API Claude)
 
 Un jour de session ≈ 20–40 débats. Avec `claude-sonnet-4-6` et ~15k tokens

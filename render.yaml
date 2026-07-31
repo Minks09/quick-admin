@@ -1,0 +1,32 @@
+# Déploiement rapide sur render.com (gratuit) pour montrer le site depuis un
+# téléphone, sans terminal : Render > New > Blueprint > choisir ce repo.
+# Voir la section "Démo rapide depuis un téléphone (Render)" du README.
+#
+# Ne déploie que le site web avec les élus réels (sync automatique au
+# démarrage) — pas de pipeline quotidien ni de résumés Claude (pas de clé
+# API requise pour cette démo).
+databases:
+  - name: politrace-db
+    plan: free
+    databaseName: politrace
+    user: politrace
+
+services:
+  - type: web
+    name: politrace
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: politrace-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SITE_NAME
+        value: Politrace
+      - key: DEFAULT_LANG
+        value: fr
+      - key: PARLAMENT_ODATA
+        value: https://ws.parlament.ch/odata.svc
