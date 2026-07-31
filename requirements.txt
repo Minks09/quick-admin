@@ -1,4 +1,8 @@
 fastapi>=0.111
+# Starlette 1.0 changed Jinja2Templates.TemplateResponse to (request, name, context) ;
+# tout le site appelle l'ancienne forme (name, context) → épinglé sous 1.0 pour éviter
+# un rendu cassé silencieusement (TypeError masqué dans le cache Jinja2) sur une install neuve.
+starlette<1.0
 uvicorn[standard]>=0.30
 jinja2>=3.1
 sqlalchemy>=2.0

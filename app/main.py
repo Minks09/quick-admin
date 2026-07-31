@@ -55,8 +55,10 @@ def ctx(request: Request, lang: str, **kw):
 
 from .accounts import router as accounts_router  # noqa: E402
 from .admin import router as admin_router  # noqa: E402
+from .quiz import router as quiz_router  # noqa: E402
 app.include_router(accounts_router)
 app.include_router(admin_router)
+app.include_router(quiz_router)
 
 
 @app.get("/")

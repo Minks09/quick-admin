@@ -151,3 +151,15 @@ footer{max-width:980px;margin:0 auto;padding:24px 20px 48px;border-top:3px solid
 .pubform{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
 .pubform label{font-size:.9rem;font-weight:600;display:flex;gap:6px;align-items:center}
 .pubform button{font:inherit;font-weight:700;padding:8px 18px;background:var(--red);color:var(--white);border:2px solid var(--red);cursor:pointer}
+
+/* ---- quiz ---- */
+.quizform{display:flex;flex-direction:column;gap:22px;max-width:640px;margin:18px 0}
+.quizq{border:1px solid var(--line);background:var(--white);padding:14px 18px;margin:0}
+.quizq legend{font-weight:700;padding:0 6px 6px 0}
+.scale{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
+.scaleopt{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--steel);cursor:pointer}
+.scaleopt input{accent-color:var(--red);cursor:pointer}
+.quizform > button{align-self:flex-start;font:inherit;font-weight:700;padding:10px 22px;background:var(--ink);color:var(--white);border:2px solid var(--ink);cursor:pointer}
+.axisbars{display:flex;flex-direction:column;gap:16px;max-width:520px;margin:16px 0}
+.axisbar .track{position:relative;height:8px;background:var(--line)}
+.axisbar .track i{position:absolute;top:-4px;width:16px;height:16px;background:var(--red);border-radius:50%;transform:translateX(-50%)}

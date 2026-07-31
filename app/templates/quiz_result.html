@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ t('quiz_result_title') }}{% endblock %}
+{% block content %}
+<h1>{{ t('quiz_result_title') }}</h1>
+
+<section>
+  <h2 class="rule">{{ t('quiz_closest_party') }}</h2>
+  <p class="lede"><i class="pchip" style="background:{{ pcolor(party.abbrs[0]) }}"></i>{{ party.abbrs[0] }}</p>
+
+  {% if example %}
+  <div class="cards">
+    <article class="card">
+      <p class="meta mono">{{ t('quiz_example_politician') }}</p>
+      <h3><a href="/{{ lang }}/politiciens/{{ example.id }}">{{ example.first_name }} {{ example.last_name }}</a></h3>
+      <p class="ptags mono">{{ example.party_abbr or '' }} · {{ example.canton_abbr or '' }} · {{ example.council or example.institution or '' }}</p>
+      <a class="more" href="/{{ lang }}/politiciens/{{ example.id }}">{{ t('quiz_view_profile') }} →</a>
+    </article>
+  </div>
+  {% else %}
+  <p class="note">{{ t('quiz_no_example') }}</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2 class="rule red">{{ t('quiz_closest_canton') }}</h2>
+  <p class="lede">{{ top_canton[lang] }}</p>
+  {% if other_cantons %}
+  <p class="note mono">{{ t('quiz_other_cantons') }} : {% for c in other_cantons %}{{ c[lang] }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2 class="rule">{{ t('quiz_your_profile') }}</h2>
+  <div class="axisbars">
+    {% for axis in ['eco', 'soc', 'ouverture', 'ecologie'] %}
+    <div class="axisbar">
+      <p class="mono tiny">{{ t('quiz_axis_' ~ axis) }}</p>
+      <div class="track"><i style="left: calc(50% + {{ (user_axes[axis] * 50) }}%)"></i></div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<p class="disclaimer">{{ t('quiz_disclaimer') }}</p>
+<p><a class="back mono" href="/{{ lang }}/quiz">← {{ t('quiz_retry') }}</a></p>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ t('quiz_title') }}{% endblock %}
+{% block content %}
+<h1>{{ t('quiz_title') }}</h1>
+<p class="lede">{{ t('quiz_intro') }}</p>
+
+<form class="quizform" method="post" action="/{{ lang }}/quiz">
+  {% for q in questions %}
+  <fieldset class="quizq">
+    <legend>{{ loop.index }}. {{ q.text[lang] }}</legend>
+    <div class="scale">
+      {% for v in range(1, 6) %}
+      <label class="scaleopt">
+        <input type="radio" name="{{ q.id }}" value="{{ v }}" required>
+        <span>{{ t('quiz_scale_' ~ v) }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+  {% endfor %}
+  <button type="submit">{{ t('quiz_submit') }}</button>
+</form>
+{% endblock %}

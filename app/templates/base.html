@@ -17,6 +17,7 @@
     <a href="/{{ lang }}/" {% if request.url.path == '/' ~ lang ~ '/' %}class="on"{% endif %}>{{ t('nav_home') }}</a>
     <a href="/{{ lang }}/politiciens" {% if '/politiciens' in request.url.path %}class="on"{% endif %}>{{ t('nav_politicians') }}</a>
     <a href="/{{ lang }}/sessions" {% if '/sessions' in request.url.path %}class="on"{% endif %}>{{ t('nav_sessions') }}</a>
+    <a href="/{{ lang }}/quiz" {% if '/quiz' in request.url.path %}class="on"{% endif %}>{{ t('nav_quiz') }}</a>
     <a href="/{{ lang }}/a-propos" {% if '/a-propos' in request.url.path %}class="on"{% endif %}>{{ t('nav_about') }}</a>
     {% if user %}
       <a href="/{{ lang }}/alertes" {% if '/alertes' in request.url.path %}class="on"{% endif %}>{{ t('my_alerts') }}</a>
