@@ -32,7 +32,7 @@
 <section>
   <h2 class="rule">{{ t('quiz_your_profile') }}</h2>
   <div class="axisbars">
-    {% for axis in ['eco', 'soc', 'ouverture', 'ecologie'] %}
+    {% for axis in ['eco', 'societe', 'secu', 'migration', 'exterieure', 'ecologie'] %}
     <div class="axisbar">
       <p class="mono tiny">{{ t('quiz_axis_' ~ axis) }}</p>
       <div class="track"><i style="left: calc(50% + {{ (user_axes[axis] * 50) }}%)"></i></div>
