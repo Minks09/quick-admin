@@ -34,6 +34,10 @@ Ajoute aussi, au niveau racine du JSON (hors langues), une clé "groups" :
 la liste des abréviations des partis/groupes qui se sont exprimés ou dont la
 position ressort du texte (ex. ["UDC","PS","PLR","Centre","VERT-E-S","PVL"]).
 Uniquement ceux réellement présents dans la retranscription.
+Chaque orateur est annoncé ainsi : [Nom Prénom (groupe, canton) — fonction].
+Codes de groupe : V = UDC, S = PS, RL = PLR, M-E = Centre, G = VERT-E-S,
+GL = PVL. Fonctions : P = président·e, BR = conseiller·ère fédéral·e,
+Mit = membre (suffixe -M/-F). Utilise ces groupes pour attribuer les positions.
 
 Règles strictes :
 - Uniquement des faits présents dans la retranscription. N'invente rien.
@@ -69,11 +73,16 @@ def _call_claude_cli(system: str, prompt: str) -> str:
     """
     result = subprocess.run(
         ["claude", "-p", f"{system}\n\n{prompt}", "--output-format", "text"],
+        # stdin fermé : sans terminal (cron, systemd, Docker), `claude -p`
+        # attendrait sinon des données sur l'entrée standard.
+        stdin=subprocess.DEVNULL,
         capture_output=True, text=True, timeout=600,
         env={k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"},
     )
     if result.returncode != 0:
-        raise RuntimeError(f"claude CLI: {result.stderr.strip()[:300]}")
+        # Le message utile (ex. « OAuth session expired ») arrive parfois sur stdout
+        msg = (result.stderr.strip() + " " + result.stdout.strip()).strip()
+        raise RuntimeError(f"claude CLI (code {result.returncode}): {msg[:300]}")
     return result.stdout
 
 SYSTEM_COMMUNIQUE = """Tu es un journaliste politique suisse rigoureux et neutre.
@@ -121,9 +130,11 @@ def summarize_communique(title: str, sender: str, day: str, text: str) -> dict |
     return _call_and_parse(SYSTEM_COMMUNIQUE, prompt)
 
 
-def summarize_debate(title: str, council: str, day: str, transcript_text: str) -> dict | None:
+def summarize_debate(title: str, council: str, day: str, transcript_text: str,
+                     business: str | None = None) -> dict | None:
     text = transcript_text[:MAX_INPUT_CHARS]
-    prompt = (f"Objet : {title or 'Sans titre'}\n"
+    number = f"Objet n° : {business}\n" if business else ""
+    prompt = (f"Objet : {title or 'Sans titre'}\n{number}"
               f"Conseil : {council}\nDate : {day}\n\n"
               f"Retranscription :\n{text}")
     return _call_and_parse(SYSTEM, prompt)

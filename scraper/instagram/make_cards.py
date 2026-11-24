@@ -74,13 +74,19 @@ def wrap(d, text, f, max_width):
     return lines
 
 
-def cover_card(day: date, n_debates: int, total: int) -> Image.Image:
+def cover_card(day: date, n_debates: int, total: int, in_session: bool = True) -> Image.Image:
     img = Image.new("RGB", (W, H), PAPER)
     d = ImageDraw.Draw(img)
     draw_frame(d, 1, total, day)
-    d.text((60, 90), "SESSION EN BREF", font=font(40, True), fill=RED)
+    kicker = "SESSION EN BREF" if in_session else "CONFÉDÉRATION EN BREF"
+    d.text((60, 90), kicker, font=font(40, True), fill=RED)
+    # Le mois le plus long (« septembre ») doit tenir dans la largeur utile
+    size = 150
+    while size > 80 and d.textlength(f"{day.day} {MONTHS_FR[day.month]}",
+                                     font=font(size, True)) > W - 120:
+        size -= 6
     date_str = f"{day.day} {MONTHS_FR[day.month]}\n{day.year}"
-    d.multiline_text((60, 200), date_str, font=font(150, True), fill=INK, spacing=12)
+    d.multiline_text((60, 200), date_str, font=font(size, True), fill=INK, spacing=12)
     d.text((60, 640), f"{n_debates} sujets résumés", font=font(52, True), fill=INK)
     sub = ("L'essentiel de la politique fédérale d'hier,\n"
            "résumé simplement : le sujet, les enjeux, l'issue.")
@@ -155,14 +161,16 @@ def make_for_day(day: date) -> list[str]:
         print("Aucun résumé pour ce jour — pas de visuels générés.")
         return []
 
-    rows = rows[:9]
+    all_rows = rows
+    rows = rows[:9]  # carrousel Instagram : 10 images max (couverture incluse)
     total = len(rows) + 1
+    in_session = any(deb.council_abbr in ("N", "S", "V") for deb, _ in all_rows)
     out_dir = OUT / day.isoformat()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     paths = []
     p = out_dir / "00_cover.png"
-    cover_card(day, len(rows), total).save(p)
+    cover_card(day, len(all_rows), total, in_session).save(p)
     paths.append(str(p))
     for i, (deb, s) in enumerate(rows, start=2):
         p = out_dir / f"{i - 1:02d}_{deb.council_abbr}.png"
@@ -172,7 +180,7 @@ def make_for_day(day: date) -> list[str]:
                     day=day).save(p)
         paths.append(str(p))
 
-    caption = build_caption(day, rows)
+    caption = build_caption(day, all_rows)
     (out_dir / "caption.txt").write_text(caption, encoding="utf-8")
 
     post = db.query(IGPost).filter_by(day=day).first() or IGPost(day=day)
@@ -191,7 +199,12 @@ def build_caption(day: date, rows) -> str:
         c = {"N": "CN", "S": "CE", "CF": "CF"}.get(deb.council_abbr, "")
         lines.append(f"▪️ [{c}] {s.title}")
     lines.append("\nRésumés complets en FR/DE/IT sur politrace.ch (lien en bio).")
-    lines.append("Résumés générés par IA à partir du Bulletin officiel — le texte officiel fait foi.")
+    sources = []
+    if any(deb.council_abbr in ("N", "S", "V") for deb, _ in rows):
+        sources.append("du Bulletin officiel")
+    if any(deb.council_abbr not in ("N", "S", "V") for deb, _ in rows):
+        sources.append("des communiqués de la Confédération")
+    lines.append(f"Résumés générés par IA à partir {' et '.join(sources)} — le texte officiel fait foi.")
     lines.append("\n#Suisse #Politique #Parlement #ConseilNational #ConseilDesEtats #Transparence #Schweiz #Politik #Svizzera")
     return "\n".join(lines)
 

@@ -35,6 +35,7 @@
   "about_title": "Über uns",
   "about_sources": "Quellen: Parlamentsdienste (ws.parlament.ch, Amtliches Bulletin), Lobbywatch.ch. Die Zusammenfassungen werden per KI (Claude) aus den amtlichen Protokollen erstellt und können Ungenauigkeiten enthalten; massgebend ist das Amtliche Bulletin.",
   "ai_disclaimer": "KI-Zusammenfassung auf Basis des Amtlichen Bulletins — massgebend ist der offizielle Text.",
+  "ai_disclaimer_gov": "KI-Zusammenfassung auf Basis der offiziellen Medienmitteilung des Bundes — massgebend ist der offizielle Text.",
   "members": "erfasste Gewählte",
   "interests_count": "erfasste Interessenbindungen",
   "summaries_count": "zusammengefasste Debatten",

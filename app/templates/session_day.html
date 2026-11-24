@@ -16,7 +16,7 @@
     <p>{{ s.body }}</p>
     {% if s.stakes %}<h3 class="sub">{{ t('stakes') }}</h3><p>{{ s.stakes }}</p>{% endif %}
     {% if s.outcome %}<h3 class="sub red">{{ t('outcome') }}</h3><p>{{ s.outcome }}</p>{% endif %}
-    <p class="disclaimer">{{ t('ai_disclaimer') }}</p>
+    <p class="disclaimer">{{ t('ai_disclaimer' if deb.council_abbr in ['N','S','V'] else 'ai_disclaimer_gov') }}</p>
   </article>
   {% endfor %}
 {% else %}

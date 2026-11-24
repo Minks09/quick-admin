@@ -27,10 +27,19 @@ RAW_DIR = Path("data/raw")
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
 TAG_RE = re.compile(r"<[^>]+>")
+# Balises éditoriales du Bulletin officiel : [GZ], [VS], [NAM], [NB], [PAGE 2111]…
+BO_MARK_RE = re.compile(r"\[(?:GZ|VS|NAM|NB|PAGE \d+)\]")
 
 
 def strip_html(text: str) -> str:
     return html.unescape(TAG_RE.sub(" ", text or "")).replace("\xa0", " ").strip()
+
+
+def clean_transcript(text: str) -> str:
+    text = BO_MARK_RE.sub(lambda m: " " if m.group(0) == "[NB]" else " ", text)
+    text = strip_html(text)
+    text = re.sub(r"[ \t]+", " ", text)
+    return re.sub(r"\n\s*\n+", "\n", text).strip()
 
 
 def group_by_debate(transcripts):
@@ -47,12 +56,18 @@ def group_by_debate(transcripts):
         })
         g["title"] = g["title"] or t.get("VoteBusinessTitle") or t.get("SubjectTitle") \
             or t.get("BusinessTitle") or t.get("Title")
-        g["business"] = g["business"] or t.get("BusinessNumber") or t.get("BusinessShortNumber")
+        g["business"] = g["business"] or t.get("VoteBusinessShortNumber") \
+            or t.get("BusinessShortNumber") or t.get("BusinessNumber")
         speaker = t.get("SpeakerFullName") or ""
         func = t.get("SpeakerFunction") or t.get("Function") or ""
-        text = strip_html(t.get("Text") or "")
+        # Groupe parlementaire + canton : indispensable pour attribuer les positions
+        meta = ", ".join(x for x in (t.get("ParlGroupAbbreviation"),
+                                     t.get("CantonAbbreviation")) if x)
+        text = clean_transcript(t.get("Text") or "")
         if text:
-            head = f"[{speaker}{' — ' + func if func else ''}]" if speaker else ""
+            head = ""
+            if speaker:
+                head = f"[{speaker}{f' ({meta})' if meta else ''}{' — ' + func if func else ''}]"
             g["parts"].append(f"{head}\n{text}")
     return groups
 
@@ -63,6 +78,12 @@ def run(day: date, summarize: bool = True):
 
     print(f"→ Retranscriptions du {day.isoformat()}…")
     transcripts = list(client.transcripts_for_day(day))
+    if transcripts:
+        real_sessions = client.session_ids()
+        n_before = len(transcripts)
+        transcripts = [t for t in transcripts if str(t.get("IdSession")) in real_sessions]
+        if n_before != len(transcripts):
+            print(f"  {n_before - len(transcripts)} ligne(s) de test écartée(s).")
     if not transcripts:
         print("  Aucune retranscription (pas de session ce jour). Fin.")
         return 0
@@ -97,7 +118,8 @@ def run(day: date, summarize: bool = True):
 
         print(f"  → Résumé : {g['title'] or subject} ({council})…")
         try:
-            result = summarize_debate(g["title"] or "", council, day.isoformat(), full_text)
+            result = summarize_debate(g["title"] or "", council, day.isoformat(), full_text,
+                                      business=str(g["business"] or "") or None)
         except Exception as e:  # noqa: BLE001
             print(f"    ! API Claude : {e}")
             db.commit()

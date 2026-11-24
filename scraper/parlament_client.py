@@ -101,13 +101,20 @@ class ParlamentClient:
     def transcripts_for_day(self, day: date):
         """Toutes les retranscriptions (Bulletin officiel) d'un jour donné.
 
-        Le champ Transcript.MeetingDate correspond au jour de séance.
+        Transcript.MeetingDate est une CHAÎNE au format AAAAMMJJ (pas un
+        Edm.DateTime : une comparaison avec datetime'…' est rejetée par l'API).
+        Chaque intervention existe en 5 exemplaires (une ligne par Language,
+        même texte original) : on filtre sur FR pour n'en garder qu'une.
         Chaque locuteur parle dans sa langue : le texte est donc multilingue.
         """
-        start = f"datetime'{day.isoformat()}T00:00:00'"
-        end = f"datetime'{day.isoformat()}T23:59:59'"
         return self.query(
             "Transcript",
-            filter_=f"MeetingDate ge {start} and MeetingDate le {end}",
+            filter_=f"Language eq 'FR' and MeetingDate eq '{day.strftime('%Y%m%d')}'",
             orderby="IdSubject,SortOrder",
         )
+
+    def session_ids(self) -> set[str]:
+        """IDs des vraies sessions parlementaires (pour écarter les lignes de
+        test, p. ex. IdSession '0061' publiées avant une session)."""
+        return {str(s.get("ID")) for s in self.query(
+            "Session", filter_="Language eq 'FR'", select="ID")}

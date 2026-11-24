@@ -195,12 +195,13 @@ actuels sur https://docs.claude.com.
   de base de l'offre de veille B2B : il suffit d'y ajouter la facturation.
 
 5. **Communiqués fédéraux (News Service Bund)** : flux RSS officiels sur
-   `https://www.news.admin.ch/NSBSubscriber/feeds/rss?lang=fr&topic=&kind=M&org-nr=NNN`
-   (variante constatée fonctionnelle : `d-nsbc-p.admin.ch`, même chemin).
-   La correspondance org-nr → organisation n'étant pas documentée, identifiez
-   vos numéros avec `python -m scraper.gov_news discover 1-30 101 201 301 401 1101`
-   (affiche le nom de chaque canal), puis remplissez `GOV_RSS_FEEDS` dans
-   `.env` au format `ABBR|url` (le badge ABBR s'affiche sur le site).
+   `https://d-nsbc-p.admin.ch/NSBSubscriber/feeds/rss?lang=fr&topic=&kind=M&org-nr=NNN`
+   (`www.news.admin.ch` redirige désormais vers une 404). org-nr vérifiés :
+   1 = toute la Confédération (recommandé), 101 = ChF, 201 = DFAE, 301 = DFI,
+   401 = DFJP, 501 = DDPS, 601 = DFF, 701 = DEFR, 801 = DETEC, 1101 = OFCS.
+   Pour d'autres : `python -m scraper.gov_news discover 1-30 102 202`, puis
+   remplissez `GOV_RSS_FEEDS` dans `.env` au format `ABBR|url` (le badge ABBR
+   s'affiche sur le site).
    Organisations recommandées — priorité 1 : Conseil fédéral, Chancellerie,
    DFAE, DFI, DFJP, DDPS, DFF, DEFR, DETEC ; priorité 2 (alertes B2B
    sectorielles) : OFSP, SECO, OFEV, OFEN, AFC. Les communiqués paraissent

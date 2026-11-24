@@ -19,6 +19,7 @@ fonctionnent donc sans rien changer.
 """
 import hashlib
 import os
+import re
 import sys
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timedelta
@@ -52,7 +53,7 @@ for entry in _raw_feeds:
 # Gabarit pour le mode discover (org-nr inséré à la place de {org})
 DISCOVER_BASE = os.getenv(
     "GOV_RSS_BASE",
-    "https://www.news.admin.ch/NSBSubscriber/feeds/rss?lang=fr&topic=&kind=M&org-nr={org}")
+    "https://d-nsbc-p.admin.ch/NSBSubscriber/feeds/rss?lang=fr&topic=&kind=M&org-nr={org}")
 
 MIN_TEXT = 200  # en dessous : brève sans substance, on saute
 
@@ -102,12 +103,24 @@ def _parse_date(value) -> date | None:
         return None
 
 
+_MAIN_RE = re.compile(r"<main[^>]*>(.*?)</main>", re.S | re.I)
+_NOISE_RE = re.compile(r"<(script|style|noscript|nav|svg)\b[^>]*>.*?</\1>", re.S | re.I)
+
+
+def extract_article(page_html: str) -> str:
+    """Texte du communiqué seul : contenu de <main>, sans scripts ni menus.
+    (La page admin.ch embarque ~100 ko de JSON Nuxt dans des <script>.)"""
+    m = _MAIN_RE.search(page_html)
+    body = _NOISE_RE.sub(" ", m.group(1) if m else page_html)
+    return re.sub(r"\s+", " ", strip_html(body)).strip()
+
+
 def fetch_full_text(client: httpx.Client, url: str) -> str:
     """Récupère le texte complet du communiqué (la description RSS est tronquée)."""
     try:
         r = client.get(url, follow_redirects=True)
         r.raise_for_status()
-        return strip_html(r.text)
+        return extract_article(r.text)
     except httpx.HTTPError:
         return ""
 

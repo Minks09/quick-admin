@@ -35,6 +35,7 @@
   "about_title": "Chi siamo",
   "about_sources": "Fonti: Servizi del Parlamento (ws.parlament.ch, Bollettino ufficiale), Lobbywatch.ch. I riassunti sono generati dall'IA (Claude) a partire dai resoconti ufficiali e possono contenere imprecisioni; fa fede il Bollettino ufficiale.",
   "ai_disclaimer": "Riassunto generato dall'IA sulla base del Bollettino ufficiale — fa fede il testo ufficiale.",
+  "ai_disclaimer_gov": "Riassunto generato dall'IA sulla base del comunicato ufficiale della Confederazione — fa fede il testo ufficiale.",
   "members": "eletti seguiti",
   "interests_count": "legami d'interesse censiti",
   "summaries_count": "dibattiti riassunti",
